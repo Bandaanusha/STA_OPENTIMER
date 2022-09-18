@@ -2,6 +2,8 @@
 ## Table of Contents
 [1.Introduction]()<br>
 [2.Timing Graphs]()<br>
+[3. Clk-to-q delay, library setup, hold time and jitter]()
+[4. Textual Timing Reports and Hold Analysis]()
 
 ## 1. Introduction
 **Timing Path** : Path between start point (flop clock pin / input ports) and end point (flop d pin / output ports).
@@ -138,6 +140,130 @@ Calculation of arrival time, require time and slack remains same.
 ![pinnoars](https://user-images.githubusercontent.com/62790565/190874098-a9c88473-d28e-438c-a443-7fbf6ed83685.jpg)
 
 ## 3. Clk-to-q delay, library setup, hold time and jitter
+
+![setupcondn](https://user-images.githubusercontent.com/62790565/190903087-c2cd0a38-b729-4752-99ab-8dae94edbff9.png)
+
+The above figure gives the condition for setup time. And skew is given by 
+```
+skew = |Δ1 - Δ2|
+```
+
+- To know more about setup and hold time we need to look at interior circuitry of capture and launch flops. The mux level implementation of capture flop is given in the below figure.
+
+![muximpl](https://user-images.githubusercontent.com/62790565/190904234-4e715c0b-167a-4953-853b-1e3448ed4838.jpg)
+
+** Negative Latch ** 
+ 
+![negative latch](https://user-images.githubusercontent.com/62790565/190904280-273a24a4-010b-4667-b094-22943b890348.jpg)
+
+- Transisitor level implementation of negative latch
+
+![nlcd](https://user-images.githubusercontent.com/62790565/190904322-92fc2306-20be-43bf-8110-dabd2636428c.jpg)
+
+- Working of negative latch
+
+![worknl](https://user-images.githubusercontent.com/62790565/190904449-611ab825-1392-47ff-be5b-90e462b2e9d9.png)
+
+** Positive latch **
+- Transistor level circuit of positive latch
+
+![plcd](https://user-images.githubusercontent.com/62790565/190904511-62702ba0-10cb-41cb-b0a5-66df021697f3.jpg)
+
+- Working of positive latch
+
+![workpl](https://user-images.githubusercontent.com/62790565/190904569-7473cc53-9ec2-45d5-a965-b797ae4f65b9.png)
+
+** Positive edge triggered flip-flop using master-slave configuration **
+
+![masslav](https://user-images.githubusercontent.com/62790565/190904671-7538e4a6-4575-494e-ad44-23577e43500c.png)
+
+- For negative edge of clock transmisssion gate Tr1 is on and input D is latched to output Qm of negative latch. D reaches from input of negative latch to input of positive latch.
+- For negative edge of clock transmission gate Tr3 is on. Inv4, Inv6 holds the Q state of slave positive latch. Also D is ready at the output of Inv5 to propagate till Q when CLK becomes high.
+
+![nedgcllfp](https://user-images.githubusercontent.com/62790565/190905114-331521f3-b0dc-4849-adcd-4aa7d45c8ef1.png)
+
+- ** Setup Time ** is the time before rising edge of CLK, that input D becomes valid i.e D input has to be stable such that Qm is sent out, to Q reliably. Input D takes atleast 3 inverter delays+ 1 transmission gate delay to become stable before rising edge of CLK. Atleast this much amount of time is needed by flipflop to accept the data. If the data comes in between this time frame the data will get corrupted. Therefore a certain amount of library setup time is needed for the data to be stable at the interiors of the flop.
+
+- For positive edge of clock transmission gates Tr2 and Tr4 are on. Input Qm is latched to output Q of negative latch through Tr4 and Inv6. Inv2, Inv3 hold the Qm state of master negative latch. 
+
+![pedgclfp](https://user-images.githubusercontent.com/62790565/190906930-c5abb066-fe10-4f06-845a-ee33c0194c4d.png)
+
+- ** Clock to Q delay ** is the time needed to propagate 'Qm' to 'Q'. (D was stable till output of Inv5). Therefore time required, to propogate is 1 transmission gate delay + 1 inverter delay.
+- ** Hold Time ** is the time for which D input remain valid after clock edge. In this case Tr1 is off after rising CLK. So, D is allowed to change or can change immediately after rise CLK edge. So Hold time is zero.
+
+```
+Setup Time = 3 Inverter delay + 1 Transmission gate delay
+Clk-Q = 1 transmission gate delay + 1 inverter delay
+Hold Time = zero
+```
+
+![analcond](https://user-images.githubusercontent.com/62790565/190908371-0aa0ef3a-b3bf-4213-aebe-f680b9330710.png)
+
+### Generating jitter values
+Two versions of clock signal
+
+![clock version](https://user-images.githubusercontent.com/62790565/190910697-bc8ca7d5-a562-4b80-959e-ea360b0dfa51.png)
+
+** Eye diagram **
+ Combined version of two version of clock signal is called eye diagram.
+ - Ideal eye diagram
+ 
+ ![idealeye](https://user-images.githubusercontent.com/62790565/190910843-7e9bdc3a-b385-4e7c-9e27-41521a279f39.png)
+ 
+ - Realistic eye diagram
+ 
+ ![eyecn](https://user-images.githubusercontent.com/62790565/190910919-04ed28b5-7d4d-4f7a-ba82-7cba109e744f.png)
+
+The clock does not appear at 0ns at every flipflop. It is bound to arrive at different time. This consideration gives one step better realistic/practical eye diagram.
+
+- Eye diagram considering power variations
+<br>Another important consideration to be taken is the power rails. In the above cases it is assumed that the power is constant and ideal which is not practical. Power Supply variations cause voltage drop and ground bounce.
+
+![morerealeye](https://user-images.githubusercontent.com/62790565/190911031-2bd7819b-f1f5-43b6-bb55-6361682cda89.png)
+
+- ** Noise Margin **
+Noise margin is amount of distortion allowed
+
+![noise margin](https://user-images.githubusercontent.com/62790565/190911122-7f75d175-c2a4-410c-a6da-f8ae13174b69.png)
+
+- ** Jitter **
+The window where the distortion is observed is called jitter. This has to be accounted for in the clock period as well. The new clock period can be 0±Δ to T±Δ.
+<br>The non-corrupted data is observed in region outside which the distortion. If the data is launched or captured in this window it is considered as reliable data
+
+![jitter](https://user-images.githubusercontent.com/62790565/190911227-9c1115d6-b855-4af3-b3da-dda0952d97e4.png)
+
+Jitter has to be acccounted in the timing reports by parameter called Uncertainty.
+
+![jitta](https://user-images.githubusercontent.com/62790565/190911469-a21e511a-8e1b-4fc2-b938-79def3110f70.png)
+
+```
+Data Arrival time    Data Required time
+        Θ+Δ1      <     T+Δ2 - S - SU
+
+Where,
+S is Slack
+SU is Uncertainity 
+```
+
+## 4. Textual Timing Reports and Hold Analysis
+** Textual representation of setup analysis **
+
+![texrep](https://user-images.githubusercontent.com/62790565/190911739-f00e726d-864c-4982-981d-53f759f5b5e1.png)
+
+### Single clock - reg2reg Hold (min) analysis
+Hold analysis is mostly dependent on launch flop. It is the time required to launch the data. In this analysis only the edge of the clock is considered not the whole period. In case of setup time the whole period was considered.
+
+![holan2](https://user-images.githubusercontent.com/62790565/190911980-75eca38e-805e-44b6-a77a-16717f5618e3.png)
+
+<br> ** Hold timing analysis with uncertainity **
+The uncertainity caused because of the jitter has less impact in hold analysis because we consider only the launch edge of the clk, incase of setup analysis we consider both the launch edge and capture edge of the flop hence increasing the jitter thereby increasing the uncertainity. Hence incase of hold analysis we will have a lower uncertainty value.
+
+![holdan3](https://user-images.githubusercontent.com/62790565/190912097-ab0993a1-5e38-4f5e-9db5-3c3add9f60b6.png)
+
+** Hold analysis textual representation **
+
+![holdantex](https://user-images.githubusercontent.com/62790565/190912169-6b8f0449-2a17-438d-95b1-cbc62058da0e.png)
+
 
 
 

@@ -4,6 +4,7 @@
 [2.Timing Graphs]()<br>
 [3. Clk-to-q delay, library setup, hold time and jitter]()
 [4. Textual Timing Reports and Hold Analysis]()
+[5. On-chip  Variation]()
 
 ## 1. Introduction
 **Timing Path** : Path between start point (flop clock pin / input ports) and end point (flop d pin / output ports).
@@ -152,7 +153,7 @@ skew = |Δ1 - Δ2|
 
 ![muximpl](https://user-images.githubusercontent.com/62790565/190904234-4e715c0b-167a-4953-853b-1e3448ed4838.jpg)
 
-** Negative Latch ** 
+**Negative Latch** 
  
 ![negative latch](https://user-images.githubusercontent.com/62790565/190904280-273a24a4-010b-4667-b094-22943b890348.jpg)
 
@@ -164,7 +165,7 @@ skew = |Δ1 - Δ2|
 
 ![worknl](https://user-images.githubusercontent.com/62790565/190904449-611ab825-1392-47ff-be5b-90e462b2e9d9.png)
 
-** Positive latch **
+**Positive latch**
 - Transistor level circuit of positive latch
 
 ![plcd](https://user-images.githubusercontent.com/62790565/190904511-62702ba0-10cb-41cb-b0a5-66df021697f3.jpg)
@@ -173,7 +174,7 @@ skew = |Δ1 - Δ2|
 
 ![workpl](https://user-images.githubusercontent.com/62790565/190904569-7473cc53-9ec2-45d5-a965-b797ae4f65b9.png)
 
-** Positive edge triggered flip-flop using master-slave configuration **
+**Positive edge triggered flip-flop using master-slave configuration**
 
 ![masslav](https://user-images.githubusercontent.com/62790565/190904671-7538e4a6-4575-494e-ad44-23577e43500c.png)
 
@@ -182,14 +183,14 @@ skew = |Δ1 - Δ2|
 
 ![nedgcllfp](https://user-images.githubusercontent.com/62790565/190905114-331521f3-b0dc-4849-adcd-4aa7d45c8ef1.png)
 
-- ** Setup Time ** is the time before rising edge of CLK, that input D becomes valid i.e D input has to be stable such that Qm is sent out, to Q reliably. Input D takes atleast 3 inverter delays+ 1 transmission gate delay to become stable before rising edge of CLK. Atleast this much amount of time is needed by flipflop to accept the data. If the data comes in between this time frame the data will get corrupted. Therefore a certain amount of library setup time is needed for the data to be stable at the interiors of the flop.
+- **Setup Time** is the time before rising edge of CLK, that input D becomes valid i.e D input has to be stable such that Qm is sent out, to Q reliably. Input D takes atleast 3 inverter delays+ 1 transmission gate delay to become stable before rising edge of CLK. Atleast this much amount of time is needed by flipflop to accept the data. If the data comes in between this time frame the data will get corrupted. Therefore a certain amount of library setup time is needed for the data to be stable at the interiors of the flop.
 
 - For positive edge of clock transmission gates Tr2 and Tr4 are on. Input Qm is latched to output Q of negative latch through Tr4 and Inv6. Inv2, Inv3 hold the Qm state of master negative latch. 
 
 ![pedgclfp](https://user-images.githubusercontent.com/62790565/190906930-c5abb066-fe10-4f06-845a-ee33c0194c4d.png)
 
-- ** Clock to Q delay ** is the time needed to propagate 'Qm' to 'Q'. (D was stable till output of Inv5). Therefore time required, to propogate is 1 transmission gate delay + 1 inverter delay.
-- ** Hold Time ** is the time for which D input remain valid after clock edge. In this case Tr1 is off after rising CLK. So, D is allowed to change or can change immediately after rise CLK edge. So Hold time is zero.
+- **Clock to Q delay** is the time needed to propagate 'Qm' to 'Q'. (D was stable till output of Inv5). Therefore time required, to propogate is 1 transmission gate delay + 1 inverter delay.
+- **Hold Time** is the time for which D input remain valid after clock edge. In this case Tr1 is off after rising CLK. So, D is allowed to change or can change immediately after rise CLK edge. So Hold time is zero.
 
 ```
 Setup Time = 3 Inverter delay + 1 Transmission gate delay
@@ -204,7 +205,7 @@ Two versions of clock signal
 
 ![clock version](https://user-images.githubusercontent.com/62790565/190910697-bc8ca7d5-a562-4b80-959e-ea360b0dfa51.png)
 
-** Eye diagram **
+**Eye diagram**
  Combined version of two version of clock signal is called eye diagram.
  - Ideal eye diagram
  
@@ -221,12 +222,12 @@ The clock does not appear at 0ns at every flipflop. It is bound to arrive at dif
 
 ![morerealeye](https://user-images.githubusercontent.com/62790565/190911031-2bd7819b-f1f5-43b6-bb55-6361682cda89.png)
 
-- ** Noise Margin **
+- **Noise Margin**
 Noise margin is amount of distortion allowed
 
 ![noise margin](https://user-images.githubusercontent.com/62790565/190911122-7f75d175-c2a4-410c-a6da-f8ae13174b69.png)
 
-- ** Jitter **
+- **Jitter**
 The window where the distortion is observed is called jitter. This has to be accounted for in the clock period as well. The new clock period can be 0±Δ to T±Δ.
 <br>The non-corrupted data is observed in region outside which the distortion. If the data is launched or captured in this window it is considered as reliable data
 
@@ -260,10 +261,51 @@ The uncertainity caused because of the jitter has less impact in hold analysis b
 
 ![holdan3](https://user-images.githubusercontent.com/62790565/190912097-ab0993a1-5e38-4f5e-9db5-3c3add9f60b6.png)
 
-** Hold analysis textual representation **
+**Hold analysis textual representation**
 
 ![holdantex](https://user-images.githubusercontent.com/62790565/190912169-6b8f0449-2a17-438d-95b1-cbc62058da0e.png)
 
 
+## 5. On-chip  Variation
+**Single Inverter** 
 
+![inverter](https://user-images.githubusercontent.com/62790565/190912586-99480fc0-7112-41b0-b512-426e0bc6fd8a.jpg)
 
+**Inverter chain**
+
+![inverter chain](https://user-images.githubusercontent.com/62790565/190912882-69143411-b32a-4356-8973-fc8fb7c4bcb2.jpg)
+
+#### Sources of variation - etching
+Masks are non uniform in reality. So there are width and length variations.
+
+![actual mask](https://user-images.githubusercontent.com/62790565/190913005-e8218781-cd76-4090-953e-ea3ffbebad2b.jpg)
+
+![effect on inverter chain](https://user-images.githubusercontent.com/62790565/190913089-eb31fa2e-4b31-44f9-9c94-46158bad5132.jpg)
+
+- Actual mask results in unproper etching and width and length of the transistor is non uniform across the transistor. Drain current varies with changes of width and length of the transistor.
+
+![current](https://user-images.githubusercontent.com/62790565/190913437-4d0c00d3-aa06-4ca4-9b60-bb7b4e41a06d.jpg)
+
+#### Sources of Varation - oxide thickness
+- In oxidation process practically oxide is non-uniformly grown.
+
+![ox1](https://user-images.githubusercontent.com/62790565/190914075-ad85e435-6f54-46db-9b33-7c20dcba7b04.jpg)
+
+- Non uniform oxide thickness effects drain current.
+
+![ox2](https://user-images.githubusercontent.com/62790565/190914174-9f0a6b3a-1136-4739-82c5-91ce96074a78.jpg)
+
+#### Relationship between resistance, drain current and delay
+![effe1](https://user-images.githubusercontent.com/62790565/190914540-d60f2670-5de8-49af-bf4b-c0034d5767fc.jpg)
+
+![effe2](https://user-images.githubusercontent.com/62790565/190914547-bb6a55f6-d03d-42a7-89a8-4a8c8076fce0.jpg)
+
+![effe3](https://user-images.githubusercontent.com/62790565/190914551-8a092426-e99b-4232-b0a9-ec6ce8d0a4bb.jpg)
+
+![effe4](https://user-images.githubusercontent.com/62790565/190914558-af2e8317-4820-415b-bfdb-9cfe2edfc3dc.jpg)
+
+![effe5](https://user-images.githubusercontent.com/62790565/190914562-418a92c1-c13c-4c6b-bd21-3111ff07bd02.jpg)
+
+![effe6](https://user-images.githubusercontent.com/62790565/190914580-9bb9ac92-6af3-4563-9725-b55e9c891bc7.jpg)
+
+## 6. 

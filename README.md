@@ -310,3 +310,12 @@ Masks are non uniform in reality. So there are width and length variations.
 ![effe6](https://user-images.githubusercontent.com/62790565/190914580-9bb9ac92-6af3-4563-9725-b55e9c891bc7.jpg)
 
 ## 6. OCV timing and pessimism removal
+
+![ocv1](https://user-images.githubusercontent.com/62790565/190918978-273fabc7-6d8e-4555-bcb5-216015c4dbcb.png)
+
+![ocv2](https://user-images.githubusercontent.com/62790565/190918994-44946898-ed01-42f2-962d-85b8d3a9114d.png)
+
+![ocv3](https://user-images.githubusercontent.com/62790565/190919003-5c5c4914-fa53-4ba8-9e8f-d783b780d2a0.png)
+
+![ocv4](https://user-images.githubusercontent.com/62790565/190919012-80af3396-d53b-4707-ab22-dce201ee7636.png)
+
